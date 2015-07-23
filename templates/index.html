@@ -1,22 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"
-          rel="stylesheet">
-  </head>
-  <body>
-    <div class="container">
-      <div class="header">
-        <h3 class="text-muted">Upload Your Resumes Here!</h3>
-      </div>
-      <hr/>
-      <div>
+<html>
 
-      <form action="upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="file"><br /><br />
-        <input type="submit" value="Upload">
-      </form>
+  <head>
+    <meta charset="utf-8"/>
+    <title>IIITA Resume Portal</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link href="http://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet" />
+    <link href="assets/css/style.css" rel="stylesheet" />
+  </head>
+
+  <body class="encrypt">
+  <div id="stage">
+
+    <div id="step2">
+      <div class="content resumeUploadForm">
+        <h1>Upload your Resume here!</h1>
+        <h2>Make sure your resume is in <strong>PDF</strong> & follows the naming convention  <strong>RollNo_FirstName</strong>.</h2>
+        <a class="button browse blue" onclick="javascript:document.getElementById('fileUploader').click();">Browse</a>
+        <input type="file" id="fileUploader" />
+        <!-- <a class="button decrypt magenta">Decrypt a file</a> -->
+        <form action="upload" method="post" enctype="multipart/form-data">
+          <a class="button process blue" type="submit" onclick="javascript:this.parentNode.submit()">Upload</a>
+        </form>
+
       </div>
     </div>
+
   </body>
 </html>

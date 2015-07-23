@@ -1,21 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"
-          rel="stylesheet">
-  </head>
-  <body>
-    <div class="container">
-      <div class="header">
-        <h3 class="text-muted">Login with Google</h3>
-      </div>
-      <hr/>
-      <div>
+<html>
 
-      <form action="googleLogin" method="get" enctype="multipart/form-data">
-        <input type="submit" value="Login with Google">
-      </form>
+  <head>
+    <meta charset="utf-8"/>
+    <title>IIITA Resume Portal</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link href="http://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet" />
+    <link href="assets/css/style.css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <div id="stage">
+
+      <div id="step1">
+        <div class="content">
+          <h1>IIITA Resume Portal</h1>
+          <form action="googleLogin" method="get" enctype="multipart/form-data">
+            <a class="button red" type="submit" onclick="javascript:this.parentNode.submit()">Login using IIITA Email</a>
+          </form>
+        </div>
       </div>
     </div>
+
   </body>
 </html>
