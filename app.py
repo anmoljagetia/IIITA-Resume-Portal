@@ -5,6 +5,8 @@ from flask_oauth import OAuth
 from rauth import OAuth2Service
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager,UserMixin,current_user,current_app,login_user,logout_user,login_required
+import re
+from flask_mime import Mime
 
 SECRET_KEY = 'file_uploader'
 DEBUG = True
@@ -117,6 +119,12 @@ def callback():
     response = response.json()
     session = google.get_session(response['access_token'])
     user = session.get('https://www.googleapis.com/oauth2/v1/userinfo').json()
+    if 'hd' not in user:
+        return redirect(url_for('index')) 
+
+    if user['hd'] != 'iiita.ac.in':
+        return redirect(url_for('index')) 
+
     me = User.get_or_create(user['name'],user['id'],user['email'])
     login_user(me)
     return redirect(url_for('uploadDisplay'))
@@ -134,27 +142,32 @@ def upload():
     file = request.files['file']
     # Check if the file is one of the allowed types/extensions
     if file and allowed_file(file.filename):
+        extract = re.findall('([^@]+)',current_user.email)
+        file.filename = extract[0] + ".pdf"
         # Make the filename safe, remove unsupported chars
-        filename = secure_filename(file.filename)
+        #filename = secure_filename(file.filename)
         # Move the file form the temporal folder to
         # the upload folder we setup
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
         # Redirect the user to the uploaded_file route, which
         # will basicaly show on the browser the uploaded file
-        # return redirect(url_for('uploaded_file',
-        #                         filename=filename))
-        return render_template('uploaded.html')
+        return render_template('uploaded.html', email = file.filename)
 
 
 # This route is expecting a parameter containing the name
 # of a file. Then it will locate that file on the upload
 # directory and show it on the browser, so if the user uploads
 # an image, that image is going to be show after the upload
-@app.route('/uploads/<filename>', methods=['POST'])
+@app.route('/uploads/<file>', methods=['GET'])
 @login_required
-def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'],
-                               filename)
+def uploaded_file(file):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], file)
+
+@app.route('/view/<file>')
+@login_required
+def viewFile(file):
+    return redirect(url_for('uploaded_file',
+                             file=file))
 
 @app.route('/logout', methods=['POST'])
 @login_required

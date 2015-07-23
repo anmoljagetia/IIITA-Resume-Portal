@@ -21,15 +21,21 @@
       <div class="content resumeUploadForm">
         <h1>Thank you for your Resume!</h1>
         <h2>Best of luck for the placements!</h2>
-        <form action="/uploads/<filename>" method="post" enctype="multipart/form-data">
-	       <a class="button browse blue" onclick="javascript:this.parentNode.submit()">View</a>
-        </form>
-
+       
+        <form action="/uploads" method="post" enctype="multipart/form-data" name="viewForm" target="_blank" type="application/pdf">
+            <a class="button browse blue" href = "{{ url_for('viewFile', file=email) }}" id="viewButton" type="application/pdf" target="_blank">View</a>
+            </form>
+             <!-- 
+            <embed src="/uploads/{{ email }}" width="800px" height="2100px" type="application/pdf">
+      --> 
         <form action="logout" method="post" enctype="multipart/form-data">
-          <a class="button decrypt blue" type="submit" onclick="javascript:this.parentNode.submit()">Logout</a>
+            <a class="button decrypt blue" type="submit" onclick="javascript:this.parentNode.submit()" id="logoutButton">Logout</a>
         </form>
 
       </div>
     </div>
+    <div id="username" style="display:hidden" value="{{email}}">{{ email }}</div>
+    </script>
+
   </body>
 </html>
