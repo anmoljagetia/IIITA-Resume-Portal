@@ -35,12 +35,43 @@ google = OAuth2Service(
 
 redirect_uri = 'http://localhost:5000/callback'
 
-class User:
+class User(db.Model):
+    id = db.Column(db.Integer,primary_key = True)
+    name = db.Column(db.String(80))
+    google_id = db.Column(db.String(200),unique=True)
+    email = db.Column(db.String(40))
+
     def __init__(self,name,google_id,email):
         self.name = name
-        self.google_id = google_id 
+        self.google_id = google_id
         self.email = email 
 
+    def is_authenticated(self):
+        return True 
+
+    def is_active(self):
+        return True 
+
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        
+        try:
+            return unicode(self.id)
+
+        except NameError:
+            return str(self.id)
+
+    @staticmethod
+    def get_or_create(name,google_id,email):
+        user = User.query.filter_by(google_id=google_id).first()
+
+        if user is None:
+            user = User(name,google_id,email)
+            db.session.add(user)
+            db.session.commit()
+        return user
     
 
 # This is the path to the upload directory
@@ -54,13 +85,19 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in app.config['ALLOWED_EXTENSIONS']
 
+@login_manager.user_loader
+def load_user(id):
+    return User.query.get(int(id))
 
 # This route will show a form to perform an AJAX request
 # jQuery is loaded to execute the request and update the
 # value of the operation
 @app.route('/')
 def index():
-    return render_template('login.html')
+    if current_user.is_authenticated():
+        return redirect(url_for('uploadDisplay'))
+    else:
+        return render_template('login.html')
 
 #Google login
 @app.route('/login/google')
@@ -80,17 +117,18 @@ def callback():
     response = response.json()
     session = google.get_session(response['access_token'])
     user = session.get('https://www.googleapis.com/oauth2/v1/userinfo').json()
-    me = User(user['name'],user['id'],user['email'])
-    print user 
-    return redirect(url_for('uploadDisplay'),user=me.name)
+    me = User.get_or_create(user['name'],user['id'],user['email'])
+    login_user(me)
+    return redirect(url_for('uploadDisplay'))
 
-@app.route('/uploadFile/<user>')
-def uploadDisplay(user):
-    print user
+@app.route('/uploadFile')
+@login_required 
+def uploadDisplay():
     return render_template('index.html')
 
 # Route that will process the file upload
 @app.route('/upload', methods=['POST'])
+@login_required 
 def upload():
     # Get the name of the uploaded file
     file = request.files['file']
@@ -112,14 +150,17 @@ def upload():
 # directory and show it on the browser, so if the user uploads
 # an image, that image is going to be show after the upload
 @app.route('/uploads/<filename>')
+@login_required 
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'],
                                filename)
 
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
-    app.run(
-        host="0.0.0.0",
-        port=int("5000"),
-        debug=True
-    )
+    db.create_all()
+    app.run(debug=True)
