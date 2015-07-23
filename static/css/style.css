@@ -198,12 +198,17 @@ body.decrypt .if-decrypt{
 	width:216px;
 }
 
+.button.decrypt{
+	background-position: -142px 0;
+	width:190px;
+}
+
 .button.encrypt::before{
 	background-position: 0 0;
 }
 
 .button.decrypt::before{
-	background-position: -96px 0;
+	background-position: -142px 0;
 }
 
 .button.browse::before{

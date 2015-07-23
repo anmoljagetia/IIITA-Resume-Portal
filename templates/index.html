@@ -10,6 +10,8 @@
 
     <link href="http://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet" />
     <link href="static/css/style.css" rel="stylesheet" />
+    <link href="static/css/sweetalert.css" rel="stylesheet" />
+    <script src="static/js/sweetalert.min.js"></script>
   </head>
 
   <body class="encrypt">
@@ -22,35 +24,30 @@
         <form action="upload" method="post" enctype="multipart/form-data">
 	  <a class="button browse blue" onclick="javascript:document.getElementById('fileUploader').click();">Browse</a>
           <input type="file" id="fileUploader" name="file" />
-          <a class="button process blue" type="submit" onclick="javascript:this.parentNode.submit()">Upload</a>
+          <!-- <a class="button process blue" type="submit" onclick="javascript:this.parentNode.submit()">Upload</a> -->
+          <a class="button process blue" type="submit" onclick="filecheck()">Upload</a>
         </form>
 
       </div>
     </div>
 
-  </body>
-</html>
-<!--
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"
-          rel="stylesheet">
-  </head>
-  <body>
-    <div class="container">
-      <div class="header">
-        <h3 class="text-muted">Upload Your Resumes Here!</h3>
-      </div>
-      <hr/>
-      <div>
+    <script type="text/javascript">
+    function filecheck() {
+        if(document.getElementById('fileUploader').files.length != 1 ) {
+          sweetAlert("Oops...", "Please select a file to upload!", "error");
+          return false;
+        }
 
-      <form action="upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="file"><br /><br />
-        <input type="submit" value="Upload">
-      </form>
-      </div>
-    </div>
+        file = document.getElementById('fileUploader').files[0];
+
+        if(file.size > 1024*1024) {
+          sweetAlert("Oops...", "Please select a file with size lesser than 1 MB", "error");
+          return false;
+        }
+
+        return document.getElementById('fileUploader').parentNode.submit();
+    }
+    </script>
+
   </body>
 </html>
--->
