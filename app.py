@@ -1,12 +1,9 @@
 import os
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory, session
-from werkzeug import secure_filename
-from flask_oauth import OAuth
 from rauth import OAuth2Service
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager,UserMixin,current_user,current_app,login_user,logout_user,login_required
 import re
-from flask_mime import Mime
 
 SECRET_KEY = 'file_uploader'
 DEBUG = True
@@ -120,10 +117,10 @@ def callback():
     session = google.get_session(response['access_token'])
     user = session.get('https://www.googleapis.com/oauth2/v1/userinfo').json()
     if 'hd' not in user:
-        return redirect(url_for('index')) 
+        return redirect(url_for('index'))
 
     if user['hd'] != 'iiita.ac.in':
-        return redirect(url_for('index')) 
+        return redirect(url_for('index'))
 
     me = User.get_or_create(user['name'],user['id'],user['email'])
     login_user(me)
@@ -152,6 +149,8 @@ def upload():
         # Redirect the user to the uploaded_file route, which
         # will basicaly show on the browser the uploaded file
         return render_template('uploaded.html', email = file.filename)
+    else :
+        return redirect(url_for('uploadDisplay'))
 
 
 # This route is expecting a parameter containing the name

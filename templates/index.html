@@ -20,13 +20,14 @@
     <div id="step2">
       <div class="content resumeUploadForm">
         <h1>Upload your Resume here!</h1>
-        <h2>Make sure your resume is in <strong>PDF</strong> & follows the naming convention  <strong>RollNo_FirstName</strong>.</h2>
+        <h2>Make sure your resume is in <strong>PDF</strong>.</h2>
         <form action="upload" method="post" enctype="multipart/form-data">
-	  <a class="button browse blue" onclick="javascript:document.getElementById('fileUploader').click();">Browse</a>
-          <input type="file" id="fileUploader" name="file" />
+          <a class="button browse blue" onclick="javascript:document.getElementById('fileUploader').click();">Browse</a>
+          <input type="file" id="fileUploader" name="file" onchange="fileName()" />
           <!-- <a class="button process blue" type="submit" onclick="javascript:this.parentNode.submit()">Upload</a> -->
           <a class="button process blue" type="submit" onclick="filecheck()">Upload</a>
         </form>
+        <h2 id="nameOfFile" style="margin-top: 40px;"></h2>
 
       </div>
     </div>
@@ -40,12 +41,21 @@
 
         file = document.getElementById('fileUploader').files[0];
 
-        if(file.size > 1024*1024) {
-          sweetAlert("Oops...", "Please select a file with size lesser than 1 MB", "error");
+        if(file.name.match(/\.pdf$/) == null) {
+             sweetAlert("Oops...", "Files can only be in PDF format", "error");
+             return false;
+         }
+
+        if(file.size > 2*1024*1024) {
+          sweetAlert("Oops...", "Please select a file with size lesser than 2 MB", "error");
           return false;
         }
 
         return document.getElementById('fileUploader').parentNode.submit();
+    }
+
+    function fileName() {
+      document.getElementById('nameOfFile').innerHTML += "Uploaded File : " + document.getElementById('fileUploader').files[0].name;
     }
     </script>
 
