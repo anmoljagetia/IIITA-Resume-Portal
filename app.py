@@ -4,6 +4,7 @@ from rauth import OAuth2Service
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager,UserMixin,current_user,current_app,login_user,logout_user,login_required
 import re
+from nocache import nocache
 
 SECRET_KEY = 'file_uploader'
 DEBUG = True
@@ -159,11 +160,13 @@ def upload():
 # an image, that image is going to be show after the upload
 @app.route('/uploads/<file>', methods=['GET'])
 @login_required
+@nocache
 def uploaded_file(file):
     return send_from_directory(app.config['UPLOAD_FOLDER'], file)
 
 @app.route('/view/<file>')
 @login_required
+@nocache
 def viewFile(file):
     return redirect(url_for('uploaded_file',
                              file=file))

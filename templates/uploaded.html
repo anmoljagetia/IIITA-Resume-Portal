@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
-<html>
-
+<html manifest="my.cache" lang="en">
   <head>
     <meta charset="utf-8"/>
     <title>IIITA Resume Portal</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="expires" content="0">
 
     <link href="http://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet" />
     <link href="static/css/style.css" rel="stylesheet" />
@@ -21,13 +20,12 @@
       <div class="content resumeUploadForm">
         <h1>Thank you for your Resume!</h1>
         <h2>Best of luck for the placements!</h2>
-       
-        <form action="/uploads" method="post" enctype="multipart/form-data" name="viewForm" target="_blank" type="application/pdf">
-            <a class="button browse blue" href = "{{ url_for('viewFile', file=email) }}" id="viewButton" type="application/pdf" target="_blank">View</a>
-            </form>
-             <!-- 
-            <embed src="/uploads/{{ email }}" width="800px" height="2100px" type="application/pdf">
-      --> 
+
+        <form action="{{ url_for('viewFile', file=email) }}" enctype="multipart/form-data" name="viewForm" target="_blank" type="application/pdf">
+            <!-- <a class="button browse blue" href = "" id="viewButton" type="application/pdf" target="_blank">View</a> -->
+            <a class="button browse blue" onclick="javascript:this.parentNode.submit()" id="viewButton" type="application/pdf" target="_blank">View</a>
+        </form>
+
         <form action="logout" method="post" enctype="multipart/form-data">
             <a class="button decrypt blue" type="submit" onclick="javascript:this.parentNode.submit()" id="logoutButton">Logout</a>
         </form>
@@ -35,7 +33,12 @@
       </div>
     </div>
     <div id="username" style="display:hidden" value="{{email}}">{{ email }}</div>
+    <script type="text/javascript">
+    function cachePrevent() {
+      alert( document.getElementById('viewButton').href);
+      document.getElementById('viewButton').href += "?q=" + Math.random();
+      alert( document.getElementById('viewButton').href);
+    }
     </script>
-
   </body>
 </html>
