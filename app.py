@@ -117,14 +117,17 @@ def callback():
     response = response.json()
     session = google.get_session(response['access_token'])
     user = session.get('https://www.googleapis.com/oauth2/v1/userinfo').json()
-    if 'hd' not in user:
-        return redirect(url_for('index'))
-
-    if user['hd'] != 'iiita.ac.in':
-        return redirect(url_for('index'))
 
     me = User.get_or_create(user['name'],user['id'],user['email'])
     login_user(me)
+    if 'hd' not in user:
+        logout_user()
+        return redirect(url_for('index'))
+
+    if user['hd'] != 'iiita.ac.in':
+        logout_user()
+        return redirect(url_for('index'))
+
     return redirect(url_for('uploadDisplay'))
 
 @app.route('/uploadFile')
@@ -162,12 +165,23 @@ def upload():
 @login_required
 @nocache
 def uploaded_file(file):
+    extract = re.findall('([^@]+)',current_user.email)
+    expected_file = extract[0] + '.pdf'
+    if file != expected_file:
+        logout_user()
+        return redirect(url_for('index'))
     return send_from_directory(app.config['UPLOAD_FOLDER'], file)
 
 @app.route('/view/<file>')
 @login_required
 @nocache
 def viewFile(file):
+    extract = re.findall('([^@]+)',current_user.email)
+    expected_file = extract[0] + '.pdf'
+    if file != expected_file:
+        logout_user()
+        return redirect(url_for('index'))
+
     return redirect(url_for('uploaded_file',
                              file=file))
 
